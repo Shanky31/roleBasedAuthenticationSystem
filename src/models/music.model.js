@@ -13,6 +13,10 @@ const musicSchema = new mongoose.Schema({
         type:mongoose.Schema.Types.ObjectId,
         ref:"user",
         required:true
+    },
+    thumbnailImage: {
+        type: String,
+        default: null
     }
 })
 const musicModel = mongoose.model('music',musicSchema)

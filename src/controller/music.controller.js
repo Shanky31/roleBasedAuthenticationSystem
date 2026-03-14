@@ -5,14 +5,31 @@ const { uploadFile } = require("../services/storage.service");
 
 async function createMusic(req, res) {
   const { title } = req.body;
-  const file = req.file;
-  console.log(req.body);
-  const result = await uploadFile(file.buffer.toString("base64"));
+ 
+  const musicFile = req.files?.music?.[0];
+  const thumbnailFile = req.files?.thumbnailImage?.[0];
+
+
+  if (!musicFile) {
+    return res.status(400).json({ message: "Music file is required" });
+  }
+
+  const musicResult = await uploadFile(musicFile.buffer.toString("base64"));
+  
+  let thumbnailUrl = null;
+  if (thumbnailFile) {
+
+    const thumbnailResult = await uploadFile(thumbnailFile.buffer.toString("base64"));
+    thumbnailUrl = thumbnailResult.url;
+  }
+
   const music = await musicModel.create({
     title,
-    uri: result.url,
+    uri: musicResult.url,
     artist: req.user?.id,
+    thumbnailImage: thumbnailUrl
   });
+
   return res.status(201).json({
     message: "New Music Added Successfully",
     music: music,
@@ -38,8 +55,8 @@ async function getAllMusic(req, res) {
 
   const musics = await musicModel
     .find()
-    .skip(1)
-    .limit(10)
+    // .skip(1)
+    .limit()
     .populate("artist", "userName email");
   res.status(200).json({
     message: "Music fetched successfully",

@@ -9,7 +9,10 @@ const upload = multer({
     storage:multer.memoryStorage()
 })
 // create music-artists authenticated
-router.post('/upload',authMiddleware.authArtist,upload.single('music'), musicController.createMusic)
+router.post('/upload', authMiddleware.authArtist, upload.fields([
+    { name: 'music', maxCount: 1 },
+    { name: 'thumbnailImage', maxCount: 1 }
+]), musicController.createMusic)
 // create albums-artists authenticated
 router.post('/create-album',authMiddleware.authArtist, musicController.createAlbum)
 // caan be accessed by any
