@@ -25,7 +25,7 @@ async function authArtist(req,res,next){
             })
         }
 }
-async function authUser(req,res,next){
+async function loggedInUser(req,res,next){
        const token = req.cookies.token
         if(!token){
             return res.status(401).json({
@@ -65,4 +65,4 @@ const validateRegister=[
     // body('role').isIn(['user','artist']).withMessage('Invalid role'),
     validate
 ]
-module.exports={authArtist,validate,validateLogin,validateRegister,authUser}
+module.exports={authArtist,validate,validateLogin,validateRegister,loggedInUser}
