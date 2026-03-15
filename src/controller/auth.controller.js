@@ -25,11 +25,14 @@ async function registerUser(req,res) {
             id:createdUser.id,
             role:createdUser.role
         },process.env.JWT_SECRET);
-        res.cookie('token',token)
+        res.cookie('token', token, {
+            httpOnly: true,
+            secure: true,
+            sameSite: 'none'
+        });
         res.status(200).json({
-            message:"User Created Successfully",
-            token: token
-        })
+            message: "User Created Successfully"
+        });
     }
     catch(err){
         console.log("Error",err)
@@ -63,16 +66,23 @@ async function loginUser(req,res) {
         id:user._id,
         role:user?.role
     },process.env.JWT_SECRET)
-    res.cookie('token',token)
-     res.status(200).json({
-            message:"Logging you successfully",
-            user:user,
-            token: token
-        })
+    res.cookie('token', token, {
+        httpOnly: true,
+        secure: true,
+        sameSite: 'none'
+    });
+    res.status(200).json({
+        message: "Logging you successfully",
+        user: user
+    });
 }
 
-async function logOutUser(req,res){
-    res.clearCookie("token");
+async function logOutUser(req, res) {
+    res.clearCookie("token", {
+        httpOnly: true,
+        secure: true,
+        sameSite: 'none'
+    });
     res.status(200).json({
         message:"User logged Out Successfully"
     })
