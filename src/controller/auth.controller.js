@@ -27,13 +27,13 @@ async function registerUser(req,res) {
         },process.env.JWT_SECRET);
         res.cookie('token',token)
         res.status(200).json({
-            message:"User Created Successfully"
-            
+            message:"User Created Successfully",
+            token: token
         })
     }
     catch(err){
         console.log("Error",err)
-        res.status(500).json({
+        return res.status(500).json({
             message: "Internal Server Error"
         })
     }
@@ -66,7 +66,8 @@ async function loginUser(req,res) {
     res.cookie('token',token)
      res.status(200).json({
             message:"Logging you successfully",
-            user:user
+            user:user,
+            token: token
         })
 }
 
