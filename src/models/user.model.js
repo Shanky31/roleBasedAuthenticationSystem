@@ -20,6 +20,11 @@ const userSchema = new mongoose.Schema({
         enum:['user','artist'],
         default:'user'
     },
+    likedMusic:{
+        type:[mongoose.Schema.Types.ObjectId],
+        ref:'music',
+        default:[]
+    }
 })
 const userModel = mongoose.model('user',userSchema)
 

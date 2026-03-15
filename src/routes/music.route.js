@@ -21,5 +21,11 @@ router.get('/', musicController.getAllMusic)
 router.get('/album',authMiddleware.authArtist, musicController.getAllAlbum)
 // to get all the music from a single album  by id 
 router.get('/albums/:albumId',musicController.getAlbumById)
+// to like a music by user 
+router.post('/like/:musicId',authMiddleware.authUser, musicController.likeMusic)
+// to unlike a music by user 
+router.post('/unlike/:musicId',authMiddleware.authUser, musicController.unlikeMusic)
+// to get all the music liked by a single user  by id 
+router.get('/liked-music/:userId',authMiddleware.authUser, musicController.getLikedMusic)
 
 module.exports=router;

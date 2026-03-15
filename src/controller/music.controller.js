@@ -1,5 +1,6 @@
 const musicModel = require("../models/music.model");
 const albumModel = require("../models/album.model");
+const userModel = require("../models/user.model");
 const jwt = require("jsonwebtoken");
 const { uploadFile } = require("../services/storage.service");
 
@@ -84,6 +85,50 @@ async function getAlbumById(req, res) {
     album: album,
   });
 }
+async function likeMusic(req, res) {
+  const musicId = req.params.musicId;
+  const music = await musicModel.findById(musicId);
+  if (!music) {
+    return res.status(404).json({ message: "Music not found" });
+  }
+  
+  const user = await userModel.findById(req.user.id);
+  if (!user.likedMusic.includes(musicId)) {
+    user.likedMusic.push(musicId);
+    await user.save();
+  }
+  
+  return res.status(200).json({
+    message: "Music liked successfully",
+    music: music,
+  });
+}
+async function unlikeMusic(req, res) {
+  const musicId = req.params.musicId;
+  const music = await musicModel.findById(musicId);
+  if (!music) {
+    return res.status(404).json({ message: "Music not found" });
+  }
+  
+  const user = await userModel.findById(req.user.id);
+  if (user.likedMusic.includes(musicId)) {
+    user.likedMusic.pull(musicId);
+    await user.save();
+  }
+  
+  return res.status(200).json({
+    message: "Music unliked successfully",
+    music: music,
+  });
+}
+async function getLikedMusic(req, res) {
+  const user = await userModel.findById(req.user.id);
+  const musics = await musicModel.find({ _id: { $in: user.likedMusic } }).populate("artist", "userName email");
+  return res.status(200).json({
+    message: "Liked music fetched successfully",
+    list: musics,
+  });
+}
 
 module.exports = {
   createMusic,
@@ -91,4 +136,7 @@ module.exports = {
   getAllMusic,
   getAllAlbum,
   getAlbumById,
+  likeMusic,
+  unlikeMusic,
+  getLikedMusic
 };

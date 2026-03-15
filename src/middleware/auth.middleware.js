@@ -25,6 +25,25 @@ async function authArtist(req,res,next){
             })
         }
 }
+async function authUser(req,res,next){
+       const token = req.cookies.token
+        if(!token){
+            return res.status(401).json({
+                message:"User is not Authorized"
+            })
+        }
+        try{
+        const decoded=jwt.verify(token,process.env.JWT_SECRET)
+        req.user=decoded
+        next();
+    
+        }catch(error){
+             return res.status(401).json({
+                message:"User is not Authorized ABCD",
+                error:error
+            })
+        }
+}
 
 const validate=(req,res,next)=>{
     const errors=validationResult(req)
@@ -46,4 +65,4 @@ const validateRegister=[
     // body('role').isIn(['user','artist']).withMessage('Invalid role'),
     validate
 ]
-module.exports={authArtist,validate,validateLogin,validateRegister}
+module.exports={authArtist,validate,validateLogin,validateRegister,authUser}
